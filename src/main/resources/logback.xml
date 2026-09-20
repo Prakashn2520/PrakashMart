@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- Formats logs with timestamp, thread, log level, logger, request-ID from MDC, and message -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [reqId:%X{requestId:-none}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Application logger -->
+    <logger name="com.prakash.prakashmart" level="DEBUG" />
+
+    <!-- Root logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+</configuration>

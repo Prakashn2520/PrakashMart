@@ -1,0 +1,12 @@
+# PrakashMart Database & App Configuration Template
+db.driver=org.h2.Driver
+db.url=jdbc:h2:mem:prakashmart;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+db.user=sa
+db.password=
+db.pool.maxSize=10
+db.pool.minIdle=2
+db.pool.idleTimeout=300000
+db.pool.connectionTimeout=20000
+db.pool.maxLifetime=1800000
+app.session.timeout=30
+ai.chatbot.provider=mock

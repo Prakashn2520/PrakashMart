@@ -1,0 +1,179 @@
+/* ==========================================================================
+   PrakashMart - Premium Classical Design System
+   Global Tokens, Reset, Typography & Base Accessibility
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+    /* Color Palette: Heritage Navy & Classical Warm Gold */
+    --color-primary: #0e1b38;
+    --color-primary-hover: #182c59;
+    --color-primary-light: #f4f6fa;
+    --color-accent: #b38a22;
+    --color-accent-hover: #967219;
+    --color-accent-soft: #fcf9f2;
+    --color-accent-border: #e9dbc0;
+
+    /* Neutrals & Surfaces */
+    --bg-canvas: #f9fafb;
+    --bg-surface: #ffffff;
+    --bg-subtle: #f3f4f6;
+    --border-subtle: #e5e7eb;
+    --border-medium: #d1d5db;
+    --border-strong: #9ca3af;
+    --border-focus: #182c59;
+
+    /* Typography Colors */
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --text-muted: #6b7280;
+    --text-inverse: #ffffff;
+
+    /* Semantic Status Tones */
+    --success-text: #065f46;
+    --success-bg: #ecfdf5;
+    --success-border: #a7f3d0;
+
+    --danger-text: #991b1b;
+    --danger-bg: #fef2f2;
+    --danger-border: #fecaca;
+
+    --warning-text: #92400e;
+    --warning-bg: #fffbeb;
+    --warning-border: #fde68a;
+
+    --info-text: #1e40af;
+    --info-bg: #eff6ff;
+    --info-border: #bfdbfe;
+
+    /* Typography Stacks */
+    --font-serif: "Playfair Display", "Baskerville", "Georgia", "Times New Roman", serif;
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+    /* Classical Restrained Radii (No Oversized Blobs) */
+    --radius-xs: 2px;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-pill: 9999px;
+
+    /* Restrained Subtle Shadows */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 3px rgba(14, 27, 56, 0.06), 0 1px 2px rgba(14, 27, 56, 0.04);
+    --shadow-md: 0 4px 10px rgba(14, 27, 56, 0.06), 0 2px 4px rgba(14, 27, 56, 0.03);
+    --shadow-lg: 0 10px 24px rgba(14, 27, 56, 0.08), 0 4px 8px rgba(14, 27, 56, 0.04);
+    --shadow-card: 0 2px 8px rgba(14, 27, 56, 0.05);
+    --shadow-card-hover: 0 8px 20px rgba(14, 27, 56, 0.09);
+
+    /* Spacing Grid (8pt rhythm) */
+    --space-1: 0.25rem;  /* 4px */
+    --space-2: 0.5rem;   /* 8px */
+    --space-3: 0.75rem;  /* 12px */
+    --space-4: 1rem;     /* 16px */
+    --space-5: 1.25rem;  /* 20px */
+    --space-6: 1.5rem;   /* 24px */
+    --space-8: 2rem;     /* 32px */
+    --space-10: 2.5rem;  /* 40px */
+    --space-12: 3rem;    /* 48px */
+    --space-16: 4rem;    /* 64px */
+
+    /* Subtle Micro-Transitions */
+    --transition-fast: 0.15s ease-out;
+    --transition-base: 0.2s ease-out;
+}
+
+/* CSS Reset & Semantic Base */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+    line-height: 1.6;
+    letter-spacing: -0.011em;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Typography Defaults */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    color: var(--color-primary);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+}
+
+h1 { font-size: 2.25rem; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.35rem; }
+h4 { font-size: 1.15rem; }
+h5 { font-size: 1rem; font-family: var(--font-sans); font-weight: 600; }
+
+p {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-3);
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--color-accent);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: inherit;
+    color: inherit;
+}
+
+/* Accessibility Focus States */
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
