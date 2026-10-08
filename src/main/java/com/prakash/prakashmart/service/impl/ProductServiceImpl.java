@@ -120,8 +120,13 @@ public class ProductServiceImpl implements ProductService {
             throw new ValidationException("sellerId", "Valid seller ID is required");
         }
         ValidationUtil.validateProductName(dto.getName());
-        ValidationUtil.validatePrice(dto.getPrice());
-        ValidationUtil.validateStockQuantity(dto.getStockQty());
+        if (dto.getPrice() == null || dto.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ValidationException("price", "Price must be greater than 0.00");
+        }
+        Integer stock = dto.getStock() != null ? dto.getStock() : (dto.getStockQty() != null ? dto.getStockQty() : 0);
+        if (stock < 0) {
+            throw new ValidationException("stockQty", "Stock quantity must be greater than or equal to 0");
+        }
         ValidationUtil.validateCategory(dto.getCategory());
         ValidationUtil.validateProductDescription(dto.getDescription());
 
@@ -130,7 +135,7 @@ public class ProductServiceImpl implements ProductService {
         p.setName(dto.getName().trim());
         p.setDescription(dto.getDescription() != null ? dto.getDescription().trim() : null);
         p.setPrice(dto.getPrice());
-        p.setStockQty(dto.getStockQty());
+        p.setStockQty(stock);
         p.setCategory(dto.getCategory().trim());
         p.setImageUrl(dto.getImageUrl());
         p.setIsActive(true);
@@ -154,15 +159,20 @@ public class ProductServiceImpl implements ProductService {
         }
 
         ValidationUtil.validateProductName(dto.getName());
-        ValidationUtil.validatePrice(dto.getPrice());
-        ValidationUtil.validateStockQuantity(dto.getStockQty());
+        if (dto.getPrice() == null || dto.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ValidationException("price", "Price must be greater than 0.00");
+        }
+        Integer stock = dto.getStock() != null ? dto.getStock() : dto.getStockQty();
+        if (stock == null || stock < 0) {
+            throw new ValidationException("stockQty", "Stock quantity must be greater than or equal to 0");
+        }
         ValidationUtil.validateCategory(dto.getCategory());
         ValidationUtil.validateProductDescription(dto.getDescription());
 
         existing.setName(dto.getName().trim());
         existing.setDescription(dto.getDescription() != null ? dto.getDescription().trim() : null);
         existing.setPrice(dto.getPrice());
-        existing.setStockQty(dto.getStockQty());
+        existing.setStockQty(stock);
         existing.setCategory(dto.getCategory().trim());
         existing.setImageUrl(dto.getImageUrl());
 

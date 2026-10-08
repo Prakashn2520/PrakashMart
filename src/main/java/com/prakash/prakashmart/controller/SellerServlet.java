@@ -107,7 +107,7 @@ public class SellerServlet extends BaseServlet {
             String methodOverride = req.getParameter("_method");
             String action = req.getParameter("action");
 
-            if ("PUT".equalsIgnoreCase(methodOverride) || "update".equalsIgnoreCase(action)) {
+            if ("PUT".equalsIgnoreCase(methodOverride) || "update".equalsIgnoreCase(action) || "edit".equalsIgnoreCase(action)) {
                 doPut(req, resp);
                 return;
             } else if ("DELETE".equalsIgnoreCase(methodOverride) || "delete".equalsIgnoreCase(action)) {
@@ -212,6 +212,28 @@ public class SellerServlet extends BaseServlet {
 
     private void handleGetProducts(HttpServletRequest req, HttpServletResponse resp, Long sellerId, boolean isApi)
             throws Exception {
+        Long productId = parseIdFromPath(req.getPathInfo());
+        if (productId == null && req.getParameter("id") != null && !req.getParameter("id").trim().isEmpty()) {
+            try {
+                productId = Long.parseLong(req.getParameter("id").trim());
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        if (productId != null) {
+            ProductDTO product = productService.getProductById(productId);
+            // Verify ownership
+            if (product.getSellerId() != null && !product.getSellerId().equals(sellerId)) {
+                throw new AuthorizationException("Unauthorized to access this product listing");
+            }
+            if (isApi || "json".equalsIgnoreCase(req.getParameter("format")) || (req.getHeader("Accept") != null && req.getHeader("Accept").contains("application/json"))) {
+                writeJsonResponse(resp, HttpServletResponse.SC_OK, "Product retrieved", product);
+            } else {
+                req.setAttribute("product", product);
+                forwardToJsp(req, resp, "seller/products.jsp");
+            }
+            return;
+        }
+
         List<ProductDTO> products = productService.getProductsBySeller(sellerId);
         if (isApi) {
             writeJsonResponse(resp, HttpServletResponse.SC_OK, products);
@@ -241,11 +263,13 @@ public class SellerServlet extends BaseServlet {
             dto.setDescription(req.getParameter("description"));
             dto.setCategory(req.getParameter("category"));
             dto.setImageUrl(req.getParameter("imageUrl"));
-            if (req.getParameter("price") != null) {
+            if (req.getParameter("price") != null && !req.getParameter("price").trim().isEmpty()) {
                 dto.setPrice(new BigDecimal(req.getParameter("price").trim()));
             }
-            if (req.getParameter("stock") != null) {
+            if (req.getParameter("stock") != null && !req.getParameter("stock").trim().isEmpty()) {
                 dto.setStock(Integer.parseInt(req.getParameter("stock").trim()));
+            } else if (req.getParameter("stockQty") != null && !req.getParameter("stockQty").trim().isEmpty()) {
+                dto.setStock(Integer.parseInt(req.getParameter("stockQty").trim()));
             }
         }
         dto.setSellerId(sellerId);
@@ -264,28 +288,38 @@ public class SellerServlet extends BaseServlet {
         if (dto == null) {
             dto = new ProductDTO();
             Long id = parseIdFromPath(req.getPathInfo());
-            if (id == null && req.getParameter("id") != null) {
+            if (id == null && req.getParameter("id") != null && !req.getParameter("id").trim().isEmpty()) {
                 id = Long.parseLong(req.getParameter("id").trim());
+            } else if (id == null && req.getParameter("productId") != null && !req.getParameter("productId").trim().isEmpty()) {
+                id = Long.parseLong(req.getParameter("productId").trim());
             }
             dto.setId(id);
             dto.setName(req.getParameter("name"));
             dto.setDescription(req.getParameter("description"));
             dto.setCategory(req.getParameter("category"));
             dto.setImageUrl(req.getParameter("imageUrl"));
-            if (req.getParameter("price") != null) {
+            if (req.getParameter("price") != null && !req.getParameter("price").trim().isEmpty()) {
                 dto.setPrice(new BigDecimal(req.getParameter("price").trim()));
             }
-            if (req.getParameter("stock") != null) {
+            if (req.getParameter("stock") != null && !req.getParameter("stock").trim().isEmpty()) {
                 dto.setStock(Integer.parseInt(req.getParameter("stock").trim()));
+            } else if (req.getParameter("stockQty") != null && !req.getParameter("stockQty").trim().isEmpty()) {
+                dto.setStock(Integer.parseInt(req.getParameter("stockQty").trim()));
             }
         }
         dto.setSellerId(sellerId);
 
         productService.updateProduct(dto);
+        ProductDTO updated = productService.getProductById(dto.getId());
         if (isApi) {
-            writeJsonResponse(resp, HttpServletResponse.SC_OK, "Product updated successfully", dto);
+            writeJsonResponse(resp, HttpServletResponse.SC_OK, "Product updated successfully", updated);
         } else {
-            resp.sendRedirect(req.getContextPath() + "/seller/products?updated=true");
+            String redirectParam = req.getParameter("redirect");
+            if (redirectParam != null && !redirectParam.trim().isEmpty()) {
+                resp.sendRedirect(req.getContextPath() + redirectParam + (redirectParam.contains("?") ? "&" : "?") + "updated=true");
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/seller/products?updated=true");
+            }
         }
     }
 

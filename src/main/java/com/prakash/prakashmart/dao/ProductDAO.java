@@ -40,6 +40,14 @@ public interface ProductDAO {
     void update(Product product) throws DatabaseException;
 
     /**
+     * Updates an existing product listing (explicit alias).
+     *
+     * @param product Product entity to update
+     * @throws DatabaseException if a database error occurs
+     */
+    void updateProduct(Product product) throws DatabaseException;
+
+    /**
      * Deletes a product listing by ID.
      *
      * @param id Product ID

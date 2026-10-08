@@ -38,6 +38,7 @@ public class TomcatServer {
 
         File docBase = new File("src/main/webapp");
         Context ctx = tomcat.addWebapp("/prakashmart", docBase.getAbsolutePath());
+        ctx.setParentClassLoader(TomcatServer.class.getClassLoader());
 
         // Attach compiled classes to /WEB-INF/classes for annotations and servlets
         StandardRoot resources = new StandardRoot(ctx);

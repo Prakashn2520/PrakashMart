@@ -38,6 +38,13 @@ public class CsrfFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        String uri = httpRequest.getRequestURI();
+        if (uri.contains("/h2-console")) {
+            httpResponse.setHeader("X-Frame-Options", "SAMEORIGIN");
+            chain.doFilter(request, response);
+            return;
+        }
+
         // Add standard security headers on all responses
         httpResponse.setHeader("X-Content-Type-Options", "nosniff");
         httpResponse.setHeader("X-Frame-Options", "DENY");
@@ -53,7 +60,6 @@ public class CsrfFilter implements Filter {
         httpRequest.setAttribute("csrfToken", sessionCsrf);
 
         String method = httpRequest.getMethod();
-        String uri = httpRequest.getRequestURI();
 
         // Validate CSRF on state-changing requests (except login/register endpoints which have their own rate/session handling)
         if (!SAFE_METHODS.contains(method.toUpperCase())) {

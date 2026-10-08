@@ -130,7 +130,8 @@
                                         </c:choose>
                                     </td>
                                     <td style="text-align: right;">
-                                        <div style="display: inline-flex; gap: var(--space-2);">
+                                        <div style="display: inline-flex; gap: var(--space-2); align-items: center; justify-content: flex-end;">
+                                            <button type="button" class="btn btn-secondary btn-sm" onclick="editProduct(${p.id})">Edit</button>
                                             <form action="${pageContext.request.contextPath}/seller/products" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you wish to delete this creation?');">
                                                 <input type="hidden" name="_csrf" value="${csrfToken}">
                                                 <input type="hidden" name="action" value="delete">
@@ -285,5 +286,106 @@
         </form>
     </div>
 </div>
+
+<!-- Modal Dialog: Edit Existing Product -->
+<div id="editProductModal" class="modal-backdrop">
+    <div class="modal-dialog" style="max-width: 560px;">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit Creation Details</h3>
+            <button type="button" class="modal-close" onclick="PrakashMart.closeModal('editProductModal')">&times;</button>
+        </div>
+        <form id="editProductForm" action="${pageContext.request.contextPath}/seller/products" method="POST" onsubmit="PrakashMart.showFormLoading(this)">
+            <input type="hidden" name="_csrf" value="${csrfToken}">
+            <input type="hidden" name="_method" value="PUT">
+            <input type="hidden" name="action" value="update">
+            <input type="hidden" name="redirect" value="/seller/dashboard">
+            <input type="hidden" id="editProdId" name="id" value="">
+            
+            <div class="modal-body" style="padding: var(--space-6);">
+                <div class="form-group" style="margin-bottom: var(--space-3);">
+                    <span style="font-size: 0.8125rem; color: var(--text-muted);">
+                        Product Identifier: <strong id="editProdIdDisplay" style="color: var(--color-primary);"></strong>
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label for="editProdName" class="form-label">Creation Title <span class="required">*</span></label>
+                    <input type="text" id="editProdName" name="name" class="form-control" required placeholder="e.g. Ergonomic Walnut Mechanical Keyboard">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+                    <div class="form-group">
+                        <label for="editProdCategory" class="form-label">Category <span class="required">*</span></label>
+                        <select id="editProdCategory" name="category" class="form-select" required>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Books">Books</option>
+                            <option value="Clothing">Clothing</option>
+                            <option value="Home">Home &amp; Kitchen</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editProdPrice" class="form-label">Price ($ USD) <span class="required">*</span></label>
+                        <input type="number" id="editProdPrice" name="price" class="form-control" min="0.01" step="0.01" required placeholder="149.99">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editProdStock" class="form-label">Inventory Quantity <span class="required">*</span></label>
+                    <input type="number" id="editProdStock" name="stock" class="form-control" min="0" step="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editProdImage" class="form-label">Image URL (Unsplash or direct asset)</label>
+                    <input type="url" id="editProdImage" name="imageUrl" class="form-control" placeholder="https://images.unsplash.com/photo-...">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="editProdDesc" class="form-label">Detailed Description <span class="required">*</span></label>
+                    <textarea id="editProdDesc" name="description" class="form-control" rows="3" required placeholder="Describe craftsmanship, technical specifications, and key features..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="PrakashMart.closeModal('editProductModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary submit-btn">Save Changes &rarr;</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+async function editProduct(productId) {
+    if (!productId) return;
+    try {
+        if (window.Loader) Loader.show();
+        const url = '${pageContext.request.contextPath}/seller/products?id=' + encodeURIComponent(productId) + '&format=json';
+        const res = await fetch(url, {
+            headers: { 'Accept': 'application/json' }
+        });
+        if (!res.ok) {
+            throw new Error('Failed to load product details (Status ' + res.status + ')');
+        }
+        const json = await res.json();
+        const p = json.data || json;
+        
+        document.getElementById('editProdId').value = p.id;
+        const displayEl = document.getElementById('editProdIdDisplay');
+        if (displayEl) displayEl.textContent = '#' + p.id;
+        document.getElementById('editProdName').value = p.name || '';
+        document.getElementById('editProdCategory').value = p.category || 'Electronics';
+        document.getElementById('editProdPrice').value = p.price !== undefined ? p.price : '';
+        document.getElementById('editProdStock').value = (p.stock !== undefined) ? p.stock : (p.stockQty !== undefined ? p.stockQty : 0);
+        document.getElementById('editProdImage').value = p.imageUrl || '';
+        document.getElementById('editProdDesc').value = p.description || '';
+        
+        PrakashMart.openModal('editProductModal');
+    } catch (err) {
+        if (window.Toast) Toast.error('Error loading product: ' + err.message);
+        else alert('Error loading product: ' + err.message);
+    } finally {
+        if (window.Loader) Loader.hide();
+    }
+}
+</script>
 
 <jsp:include page="../common/footer.jsp" />

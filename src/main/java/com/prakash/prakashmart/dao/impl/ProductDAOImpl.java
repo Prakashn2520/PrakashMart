@@ -72,7 +72,7 @@ public class ProductDAOImpl implements ProductDAO {
             ps.setString(1, product.getName());
             ps.setString(2, product.getDescription());
             ps.setBigDecimal(3, product.getPrice());
-            ps.setInt(4, product.getStockQty());
+            ps.setInt(4, product.getStockQty() != null ? product.getStockQty() : 0);
             ps.setString(5, product.getCategory());
             ps.setString(6, product.getImageUrl());
             ps.setBoolean(7, product.getIsActive() != null ? product.getIsActive() : true);
@@ -82,6 +82,11 @@ public class ProductDAOImpl implements ProductDAO {
             logger.error("Error updating product {}", product.getId(), e);
             throw new DatabaseException("Failed to update product", e);
         }
+    }
+
+    @Override
+    public void updateProduct(Product product) throws DatabaseException {
+        update(product);
     }
 
     @Override

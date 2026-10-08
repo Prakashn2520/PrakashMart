@@ -59,15 +59,18 @@ class ProductDAOTest extends BaseDAOTest {
         assertEquals(0, new BigDecimal("79.99").compareTo(found.get().getPrice()));
         assertEquals(20, found.get().getStockQty());
 
-        // Update product
+        // Update product via explicit updateProduct method
         product.setName("Mechanical Keyboard Pro");
         product.setPrice(new BigDecimal("89.99"));
-        productDAO.update(product);
+        product.setStockQty(15);
+        productDAO.updateProduct(product);
 
         Optional<Product> updated = productDAO.findById(saved.getId());
         assertTrue(updated.isPresent());
         assertEquals("Mechanical Keyboard Pro", updated.get().getName());
         assertEquals(0, new BigDecimal("89.99").compareTo(updated.get().getPrice()));
+        assertEquals(15, updated.get().getStockQty());
+        assertEquals(saved.getId(), updated.get().getId());
 
         // Delete product
         productDAO.delete(saved.getId());

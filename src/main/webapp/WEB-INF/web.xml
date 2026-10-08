@@ -22,6 +22,21 @@
         <welcome-file>products</welcome-file>
     </welcome-file-list>
 
+    <!-- H2 Database Web Console -->
+    <servlet>
+        <servlet-name>H2Console</servlet-name>
+        <servlet-class>org.h2.server.web.WebServlet</servlet-class>
+        <init-param>
+            <param-name>webAllowOthers</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>H2Console</servlet-name>
+        <url-pattern>/h2-console/*</url-pattern>
+    </servlet-mapping>
+
     <!-- Error Pages (No Stack Trace Leakage) -->
     <error-page>
         <error-code>400</error-code>
